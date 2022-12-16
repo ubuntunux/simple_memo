@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 enum ContextMenu {
   addCategory,
+  renameCategory,
   removeCategory,
 }
 
@@ -54,21 +55,19 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
     setState(() {
       int index = _tabs.length;
 
-      _tabs.add(Tab(
-        text: "Tab $index",
-      ));
+      _tabs.add(
+          GestureDetector(
+            child: Tab(text: "Tab $index"),
+            onLongPress: () {
+              if (kDebugMode) {
+                print("onLongPress: $index");
+              }
+            },
+          )
+      );
 
       _tabViews.add(
-          Container(
-            color: const Color(0xFF111111),
-            alignment: Alignment.center,
-            child: Text(
-              'TabView $index',
-              style: const TextStyle(
-                fontSize: 30,
-              ),
-            ),
-          )
+          createTabView()
       );
 
       _tabController?.dispose();
@@ -153,31 +152,7 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
                 onTap: (int index) {
                   setState(() {
                     _selectedCategoryIndex = index;
-                  });
-
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return Dialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-                        elevation: 16,
-                        child: ListView(
-                          shrinkWrap: true,
-                          children: <Widget>[
-                            const SizedBox(height: 20),
-                            const Center(child: Text('Leaderboard')),
-                            const SizedBox(height: 20),
-                            buildRow('assets/choc.png', 'Name 1', 1000),
-                            buildRow('assets/choc.png', 'Name 2', 2000),
-                            buildRow('assets/choc.png', 'Name 3', 3000),
-                            buildRow('assets/choc.png', 'Name 4', 4000),
-                            buildRow('assets/choc.png', 'Name 5', 5000),
-                            buildRow('assets/choc.png', 'Name 6', 6000),
-                          ],
-                        ),
-                      );
-                    },
-                  );  // showDialog
+                  }); // showDialog
                 },
               ),
             ),
@@ -197,6 +172,59 @@ class _MyHomePageState extends State<MyHomePage> with TickerProviderStateMixin {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+}
+
+Widget createMemo() {
+  return Builder(
+    builder: (context) {
+      return GestureDetector(
+          child: const Text(
+            "TabView",
+            style: TextStyle(
+              fontSize: 20,
+            ),
+          ),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return Dialog(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
+                  elevation: 16,
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: <Widget>[
+                      const SizedBox(height: 20),
+                      const Center(child: Text('Leaderboard')),
+                      const SizedBox(height: 20),
+                      buildRow('assets/choc.png', 'Name 1', 1000),
+                      buildRow('assets/choc.png', 'Name 2', 2000),
+                      buildRow('assets/choc.png', 'Name 3', 3000),
+                      buildRow('assets/choc.png', 'Name 4', 4000),
+                      buildRow('assets/choc.png', 'Name 5', 5000),
+                      buildRow('assets/choc.png', 'Name 6', 6000),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        );
+    },
+  );
+}
+
+Widget createTabView() {
+  return Container(
+    color: const Color(0xFF111111),
+    alignment: Alignment.center,
+    child: ListView(
+      children: [
+        createMemo(),
+        createMemo()
+      ],
+    ),
+  );
 }
 
 Widget buildRow(String imageAsset, String name, double score) {
